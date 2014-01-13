@@ -125,7 +125,7 @@ function getImages ()
 	echo $out
 }
 
-while getopts c:f:p:q:h:d args
+while getopts c:f:p:q:o:hd args
 do
 	case $args in
 	c) ctrlFile="$OPTARG"
@@ -135,6 +135,8 @@ do
 	p) pagePerStudent="$OPTARG"
 		;;
 	q) imgQlty="$OPTARG"
+		;;
+	o) outPDF="$OPTARG"
 		;;
 	h) help
 		exit
@@ -163,7 +165,6 @@ fi
 # Temp image folder
 imgF="/var/tmp/imgs"
 imgPDF="/var/tmp/pdf"
-outPDF="/var/tmp/pdf_out"
 
 # Make sure that the temporary directory is cleaned out when interrupted.
 # trap "rm -rf ${imgF}; exit 2" 1 2 3 
@@ -217,25 +218,28 @@ fi
 
 # Check for files from previous runs. If present exit. These files can lead
 # to incorrect results. The user has to decide to keep the files or delete.
-outFileCount=`ls ${imgPDF}/*.pdf | wc -l`
-dbg $LINENO  outFileCount $outFileCount
-if [[ "$outFileCount" -gt 0 ]]
-then
-	err $LINENO "Files present in $imgPDF folder."
-	errors="Yes"
-fi
+for outDirs in $imgPDF $imgF $outPDF
+do
+	outFileCount=`ls ${outDirs}/* 2> /dev/null | wc -l`
+	dbg $LINENO  outFileCount $outFileCount
 
-outFileCount=`ls ${imgF}/*.jpg | wc -l`
-dbg $LINENO  outFileCount $outFileCount
-if [[ "$outFileCount" -gt 0 ]]
+	if [[ "$outFileCount" -gt 0 ]]
+	then
+		err $LINENO "Files present in ${outDirs} folder."
+		errors="Yes"
+	fi
+done
+
+# Check for the output directory.
+if [[ ! -d "$outPDF" ]]
 then
-	err $LINENO "Files present in $imgF folder."
-	errors="Yes"
+	err "$LINENO : Unable to access output directory $outDir"
+	exit 2
 fi
 
 if [[ "$errors" = "Yes" ]]
 then
-	err $LINENO "Files present in $imgPDF / $imgF folder. Remove them to proceed."
+	err $LINENO "Files present in temp / output folder. Remove them to proceed."
 	exit 2
 fi
 
