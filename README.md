@@ -9,7 +9,7 @@ This script was written to split the PDF files for the ML WikiSource digitizatio
 ### Running the script
 The script uses a control file to split the PDF files. The control file contains school code and number of students participating separated by commas.
 
-./splitPdf.sh  -c controlFile -f FolderContainingSourcePDFs -p pagesPerStudent -o OutputFolder -t TempFolder
+./splitPdf.sh  -c controlFile -f FolderContainingSourcePDFs -p pagesPerStudent -o OutputFolder -t TempFolder [-q ImageQuality]
 
 #### Options
 -c : Control file in CSV format. Contains School code and number of students.
@@ -17,6 +17,7 @@ The script uses a control file to split the PDF files. The control file contains
 -p : Pages to be allocated per student.
 -o : Output directory where the smaller PDF files will be created. The output file name has the format :SchoolCode_NameOfSourcePDF_StartingPage_EndingPage.pdf
 -t : Temp directory for PDF files and images
+-q : Quality of the images [1-100]
 -h : Displays help message.
 -d : Enables debug messages.
 

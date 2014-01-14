@@ -43,7 +43,7 @@ function dbg ()
 
 function help ()
 {
-	echo "Usage `basename $0` [-d] [-h] -c ContorlFile -f PDF Folder -p Pages per Student -q image quality -o OutpuFolder -t TempFolder"
+	echo "Usage `basename $0` [-d] [-h] -c ContorlFile -f PDF Folder -p Pages per Student [-q image quality] -o OutpuFolder -t TempFolder"
 	echo -e "\t -d : Enable debug messages"
 	echo -e "\t -h : Display this help message"
 }
@@ -79,8 +79,29 @@ function splitPdf ()
 	log "$LINENO  Splitting pdf file [$pdf2Split] into images."
 	dbg $LINENO  splitPdf $num
 	pdfimages -p -j "$pdf2Split" $imgF/jj
-	currentPDF=$pdf2Split
 	rm $imgF/*.ppm
+	if [[ ! -z "${imgQlty}" ]]
+	then
+		log $LINENO Image Quality $imgQlty
+		convertImages 
+	else
+		log $LINENO Image Quality Empty
+	fi
+	currentPDF=$pdf2Split
+}
+
+function convertImages ()
+{
+	log "$LINENO Changing the image quality to [${imgQlty}%]"
+	ls ${imgF}/*.jpg > conv.lst 2> /dev/null
+	
+	while read conv
+	do
+		dbg $LINENO  [$conv]
+		convert -quality ${imgQlty} "$conv" ${imgF}/new.jpg
+		# Rename the converted file.
+		mv ${imgF}/new.jpg "$conv"
+	done < conv.lst
 }
 
 function combinePdfs ()
