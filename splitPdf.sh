@@ -1,4 +1,4 @@
-#! /usr/bin/bash
+#! /usr/bin/env bash
 
 # Script to build smaller pdf files from pdf files in a given folder.
 # 
@@ -43,7 +43,7 @@ function dbg ()
 
 function help ()
 {
-	echo "Usage `basename $0` [-d] [-h] -c ContorlFile -f PDF Folder -p Pages per Student -q image quality"
+	echo "Usage `basename $0` [-d] [-h] -c ContorlFile -f PDF Folder -p Pages per Student -q image quality -o OutpuFolder"
 	echo -e "\t -d : Enable debug messages"
 	echo -e "\t -h : Display this help message"
 }
